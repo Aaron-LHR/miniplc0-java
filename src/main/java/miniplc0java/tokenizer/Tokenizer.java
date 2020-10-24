@@ -60,7 +60,11 @@ public class Tokenizer {
         }
         String result = stringBuilder.toString();
         Pos end = it.currentPos();
-        return new Token(TokenType.Uint, Integer.parseInt(result), start, end);
+        try {
+            return new Token(TokenType.Uint, Integer.parseInt(result), start, end);
+        } catch (NumberFormatException e) {
+            throw new TokenizeError(ErrorCode.IntegerOverflow ,it.currentPos());
+        }
 //        throw new Error("Not implemented");
     }
 
