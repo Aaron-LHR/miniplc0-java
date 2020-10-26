@@ -27,6 +27,8 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.7.0'
+    implementation 'junit:junit:4.12'
+    implementation 'junit:junit:4.12'
 }
 
 application {

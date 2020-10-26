@@ -92,19 +92,19 @@ public class Tokenizer {
         Pos end = it.currentPos();
         TokenType tokenType;
         switch (result) {
-            case "BEGIN":
+            case "begin":
                 tokenType = TokenType.Begin;
                 break;
-            case "END":
+            case "end":
                 tokenType = TokenType.End;
                 break;
-            case "VAR":
+            case "var":
                 tokenType = TokenType.Var;
                 break;
-            case "CONST":
+            case "const":
                 tokenType = TokenType.Const;
                 break;
-            case "PRINT":
+            case "print":
                 tokenType = TokenType.Print;
                 break;
             default:
