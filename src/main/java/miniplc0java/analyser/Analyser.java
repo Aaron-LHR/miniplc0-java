@@ -286,7 +286,7 @@ public final class Analyser {
             } else if (peeked.getTokenType() == TokenType.Print) {
                 analyseOutputStatement();
             } else if (peeked.getTokenType() == TokenType.Semicolon) {
-                next();
+                expect(TokenType.Semicolon);
             } else {
                 // 都不是，摸了
                 break;
@@ -346,20 +346,22 @@ public final class Analyser {
         // 分析这个语句
 
         // 标识符是什么？
-        String name = (String) next().getValue();
+        var nameToken = expect(TokenType.Ident);
+
+        String name = (String) nameToken.getValue();
         var symbol = symbolTable.get(name);
         if (symbol == null) {
             // 没有这个标识符
-            throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ null);
+            throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ nameToken.getStartPos());
         } else if (symbol.isConstant) {
             // 标识符是常量
-            throw new AnalyzeError(ErrorCode.AssignToConstant, /* 当前位置 */ null);
+            throw new AnalyzeError(ErrorCode.AssignToConstant, /* 当前位置 */ nameToken.getStartPos());
         }
         // 设置符号已初始化
-        initializeSymbol(name, null);
+        initializeSymbol(name, nameToken.getStartPos());
 
         // 把结果保存
-        var offset = getOffset(name, null);
+        var offset = getOffset(name, nameToken.getStartPos());
         instructions.add(new Instruction(Operation.STO, offset));
     }
 
@@ -422,25 +424,27 @@ public final class Analyser {
             // 是标识符
 
             // 加载标识符的值
-            String name = (String) next().getValue();/* 快填 */
+            var nameToken = expect(TokenType.Ident);
+            String name = (String) nameToken.getValue();/* 快填 */
             var symbol = symbolTable.get(name);
             if (symbol == null) {
                 // 没有这个标识符
-                throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ null);
+                throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ nameToken.getStartPos());
             } else if (!symbol.isInitialized) {
                 // 标识符没初始化
-                throw new AnalyzeError(ErrorCode.NotInitialized, /* 当前位置 */ null);
+                throw new AnalyzeError(ErrorCode.NotInitialized, /* 当前位置 */ nameToken.getStartPos());
             }
-            var offset = getOffset(name, null);
+            var offset = getOffset(name, nameToken.getStartPos());
             instructions.add(new Instruction(Operation.LOD, offset));
         } else if (check(TokenType.Uint)) {
             // 是整数
             // 加载整数值
-            int value = (int) next().getValue();
+            var token = expect(TokenType.Uint);
+            int value = (int) token.getValue();
             instructions.add(new Instruction(Operation.LIT, value));
         } else if (check(TokenType.LParen)) {
             // 是表达式
-            next();
+            expect(TokenType.LParen);
             // 调用相应的处理函数
             analyseExpression();
             expect(TokenType.RParen);
