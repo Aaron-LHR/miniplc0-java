@@ -250,12 +250,11 @@ public final class Analyser {
 
             // 变量初始化了吗
             boolean initialized = false;
-            var value = 0;
 
             // 下个 token 是等于号吗？如果是的话分析初始化
             if (nextIf(TokenType.Equal) != null) {
                 // 分析初始化的表达式
-                value = analyseConstantExpression();
+                analyseExpression();
                 initialized = true;
             }
 
@@ -264,12 +263,12 @@ public final class Analyser {
 
             // 加入符号表，请填写名字和当前位置（报错用）
             String name = (String) nameToken.getValue(); /* 名字 */
-            addSymbol(name, initialized, false, /* 当前位置 */ null);
+            addSymbol(name, false, false, /* 当前位置 */ null);
 
             // 如果没有初始化的话在栈里推入一个初始值
-//            if (!initialized) {
-            instructions.add(new Instruction(Operation.LIT, value));
-//            }
+            if (!initialized) {
+                instructions.add(new Instruction(Operation.LIT, 0));
+            }
         }
     }
 
