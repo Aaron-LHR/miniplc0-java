@@ -187,10 +187,8 @@ public final class Analyser {
         }
     }
 
-    /**
-     * <程序> ::= 'begin'<主过程>'end'
-     */
     private void analyseProgram() throws CompileError {
+        // 程序 -> 'begin' 主过程 'end'
         // 示例函数，示例如何调用子程序
         // 'begin'
         expect(TokenType.Begin);
@@ -202,6 +200,8 @@ public final class Analyser {
     }
 
     private void analyseMain() throws CompileError {
+        // 主过程 -> 常量声明 变量声明 语句序列
+        //throw new Error("Not implemented");
         analyseConstantDeclaration();
         analyseVariableDeclaration();
         analyseStatementSequence();
@@ -347,6 +347,10 @@ public final class Analyser {
 
         // 标识符是什么？
         var nameToken = expect(TokenType.Ident);
+        expect(TokenType.Equal);
+        analyseExpression();
+        expect(TokenType.Semicolon);
+        // 标识符是什么？
 
         String name = (String) nameToken.getValue();
         var symbol = symbolTable.get(name);
